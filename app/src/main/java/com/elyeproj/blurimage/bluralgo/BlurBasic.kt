@@ -38,78 +38,22 @@ class BlurBasic {
         var gSum = gOrig
         var bSum = bOrig
 
-        if (row == 0 || col == 0) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val topLeftPixel = currentPixels[(row - 1) * w + (col - 1)]
-            rSum += topLeftPixel ushr 16 and 0xFF
-            gSum += topLeftPixel ushr 8 and 0xFF
-            bSum += topLeftPixel and 0xFF
+        for (y in (row - 1..row + 1)) {
+            for (x in col - 1..col + 1) {
+                if (y < 0 || y > h - 1 || x < 0 || x > w - 1) {
+                    // Add the original value if it is outside the image boundary
+                    rSum += rOrig; gSum += gOrig; bSum += bOrig
+                } else if (y == row && x == col) {
+                    // Don't do anything, as we have already added once up there.
+                } else {
+                    val sidePixel = currentPixels[y * w + x]
+                    rSum += sidePixel ushr 16 and 0xFF
+                    gSum += sidePixel ushr 8 and 0xFF
+                    bSum += sidePixel and 0xFF
+                }
+            }
         }
 
-        if (row == 0) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val topPixel = currentPixels[(row - 1) * w + (col)]
-            rSum += topPixel ushr 16 and 0xFF
-            gSum += topPixel ushr 8 and 0xFF
-            bSum += topPixel and 0xFF
-        }
-
-        if (row == 0 || col == w - 1) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val topRightPixel = currentPixels[(row - 1) * w + (col + 1)]
-            rSum += topRightPixel ushr 16 and 0xFF
-            gSum += topRightPixel ushr 8 and 0xFF
-            bSum += topRightPixel and 0xFF
-        }
-
-        if (col == 0) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val leftPixel = currentPixels[(row) * w + (col - 1)]
-            rSum += leftPixel ushr 16 and 0xFF
-            gSum += leftPixel ushr 8 and 0xFF
-            bSum += leftPixel and 0xFF
-        }
-
-        if (col == w - 1) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val rightPixel = currentPixels[(row) * w + (col + 1)]
-            rSum += rightPixel ushr 16 and 0xFF
-            gSum += rightPixel ushr 8 and 0xFF
-            bSum += rightPixel and 0xFF
-        }
-
-        if (row == h - 1 || col == 0) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val bottomLeftPixel = currentPixels[(row + 1) * w + (col - 1)]
-            rSum += bottomLeftPixel ushr 16 and 0xFF
-            gSum += bottomLeftPixel ushr 8 and 0xFF
-            bSum += bottomLeftPixel and 0xFF
-        }
-
-        if (row == h - 1) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val bottomPixel = currentPixels[(row + 1) * w + (col)]
-            rSum += bottomPixel ushr 16 and 0xFF
-            gSum += bottomPixel ushr 8 and 0xFF
-            bSum += bottomPixel and 0xFF
-        }
-
-        if (row == h - 1 || col == w - 1) {
-            rSum += rOrig; gSum += gOrig; bSum += bOrig
-        } else {
-            val bottomRightPixel = currentPixels[(row + 1) * w + (col + 1)]
-            rSum += bottomRightPixel ushr 16 and 0xFF
-            gSum += bottomRightPixel ushr 8 and 0xFF
-            bSum += bottomRightPixel and 0xFF
-        }
-
-        return Color.argb(a, rSum/9, gSum/9, bSum/9)
+        return Color.argb(a, rSum / 9, gSum / 9, bSum / 9)
     }
 }
