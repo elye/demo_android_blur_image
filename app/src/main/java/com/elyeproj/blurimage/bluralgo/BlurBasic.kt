@@ -5,7 +5,7 @@ import android.graphics.Color
 
 class BlurBasic {
 
-    fun blur(image: Bitmap): Bitmap {
+    fun blur(image: Bitmap, radius: Int): Bitmap {
         val w = image.width
         val h = image.height
         val currentPixels = IntArray(w * h)
@@ -14,7 +14,7 @@ class BlurBasic {
 
         for (col in 0 until w) {
             for (row in 0 until h) {
-                newPixels[row * w + col] = getSurroundAverage(currentPixels, col, row, h, w)
+                newPixels[row * w + col] = getSurroundAverage(currentPixels, col, row, h, w, radius)
             }
         }
 
@@ -26,7 +26,8 @@ class BlurBasic {
         col: Int,
         row: Int,
         h: Int,
-        w: Int
+        w: Int,
+        radius: Int
     ): Int {
         val originalPixel = currentPixels[row * w + col]
         val a: Int = originalPixel shr 24 and 0xFF
@@ -38,8 +39,8 @@ class BlurBasic {
         var gSum = gOrig
         var bSum = bOrig
 
-        for (y in (row - 1..row + 1)) {
-            for (x in col - 1..col + 1) {
+        for (y in (row - radius..row + radius)) {
+            for (x in col - radius..col + radius) {
                 if (y < 0 || y > h - 1 || x < 0 || x > w - 1) {
                     // Add the original value if it is outside the image boundary
                     rSum += rOrig; gSum += gOrig; bSum += bOrig
@@ -54,6 +55,8 @@ class BlurBasic {
             }
         }
 
-        return Color.argb(a, rSum / 9, gSum / 9, bSum / 9)
+        val denominator = (radius * 2 + 1) * (radius * 2 + 1)
+
+        return Color.argb(a, rSum / denominator , gSum / denominator, bSum / denominator)
     }
 }
