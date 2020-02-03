@@ -12,13 +12,23 @@ class BlurBasic {
         val newPixels = IntArray(w * h)
         image.getPixels(currentPixels, 0, w, 0, 0, w, h)
 
+        blurProcess(w, h, currentPixels, newPixels, radius)
+
+        return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
+    }
+
+    fun blurProcess (
+        w: Int,
+        h: Int,
+        currentPixels: IntArray,
+        newPixels: IntArray,
+        radius: Int
+    ) {
         for (col in 0 until w) {
             for (row in 0 until h) {
                 newPixels[row * w + col] = getSurroundAverage(currentPixels, col, row, h, w, radius)
             }
         }
-
-        return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
     }
 
     private fun getSurroundAverage(
@@ -57,6 +67,8 @@ class BlurBasic {
 
         val denominator = (radius * 2 + 1) * (radius * 2 + 1)
 
-        return Color.argb(a, rSum / denominator , gSum / denominator, bSum / denominator)
-    }
+        return  ((a and 0xff) shl 24) or
+                ((rSum / denominator) and 0xff shl 16) or
+                ((gSum / denominator) and 0xff shl 8) or
+                ((bSum / denominator) and 0xff)    }
 }

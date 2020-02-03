@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.elyeproj.blurimage.bluralgo.BlurBasic
+import com.elyeproj.blurimage.bluralgo.BlurBox
 import kotlinx.android.synthetic.main.activity_blur_image_basic.*
 import kotlin.system.measureTimeMillis
 
