@@ -7,6 +7,24 @@
     android:orientation="vertical"
     tools:context=".BlurImageBasicActivity">
 
+    <RadioGroup
+        android:id="@+id/blur_method"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radio_blur_basic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Basic"/>
+        <RadioButton
+            android:id="@+id/radio_blur_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Box"/>
+    </RadioGroup>
+
     <TextView
         android:id="@+id/txt_radius"
         android:layout_width="wrap_content"
@@ -17,7 +35,7 @@
         android:id="@+id/seekbar_radius"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="8dp"
         android:max="20" />
 
     <ImageView
@@ -30,13 +48,19 @@
         android:id="@+id/btn_blur"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="8dp"
         android:text="Blur Image" />
 
     <TextView
         android:id="@+id/txt_result"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_reset"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp" />
+        android:layout_marginTop="32dp"
+        android:text="Reset Image" />
 
 </LinearLayout>

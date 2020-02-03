@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import java.util.*
 
-class BlurBox {
+class BlurBox: BlurEngine {
 
-    fun blur(image: Bitmap, radius: Int): Bitmap {
+    override fun blur(image: Bitmap, radius: Int): Bitmap {
         val w = image.width
         val h = image.height
         val currentPixels = IntArray(w * h)
@@ -15,6 +15,8 @@ class BlurBox {
         blurProcess(w, h, currentPixels, newPixels, radius)
         return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
     }
+
+    override fun getType() = "Box Blur"
 
     fun blurProcess(
         w: Int,

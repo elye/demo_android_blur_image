@@ -1,11 +1,10 @@
 package com.elyeproj.blurimage.bluralgo
 
 import android.graphics.Bitmap
-import android.graphics.Color
 
-class BlurBasic {
+class BlurBasic: BlurEngine {
 
-    fun blur(image: Bitmap, radius: Int): Bitmap {
+    override fun blur(image: Bitmap, radius: Int): Bitmap {
         val w = image.width
         val h = image.height
         val currentPixels = IntArray(w * h)
@@ -16,6 +15,8 @@ class BlurBasic {
 
         return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
     }
+
+    override fun getType() = "Basic Blur"
 
     fun blurProcess (
         w: Int,

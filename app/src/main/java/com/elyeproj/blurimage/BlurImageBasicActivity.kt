@@ -2,21 +2,32 @@ package com.elyeproj.blurimage
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.widget.RadioButton
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.elyeproj.blurimage.bluralgo.BlurBasic
 import com.elyeproj.blurimage.bluralgo.BlurBox
+import com.elyeproj.blurimage.bluralgo.BlurEngine
 import kotlinx.android.synthetic.main.activity_blur_image_basic.*
 import kotlin.system.measureTimeMillis
 
 
 class BlurImageBasicActivity : AppCompatActivity() {
 
-    private val blurEngine = BlurBasic()
+    private var blurEngine: BlurEngine = BlurBasic()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_blur_image_basic)
+
+        (blur_method.getChildAt(0) as RadioButton).isChecked = true
+
+        blur_method.setOnCheckedChangeListener { _, checkedId ->
+            when (findViewById<RadioButton>(checkedId).id) {
+                R.id.radio_blur_basic -> blurEngine = BlurBasic()
+                R.id.radio_blur_box -> blurEngine = BlurBox()
+            }
+        }
 
         btn_blur.setOnClickListener {
             val radius = seekbar_radius.progress
@@ -26,7 +37,11 @@ class BlurImageBasicActivity : AppCompatActivity() {
                 )
             }
 
-            txt_result.text = "Time $measureTime ms with Radius: $radius"
+            txt_result.text = "Time $measureTime ms with Radius: $radius using ${blurEngine.getType()}"
+        }
+
+        btn_reset.setOnClickListener {
+            img_view.setImageResource(R.drawable.spring_in_lake_tekapo)
         }
 
         seekbar_radius.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
