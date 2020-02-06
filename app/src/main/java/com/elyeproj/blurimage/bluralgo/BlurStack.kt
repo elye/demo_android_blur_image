@@ -1,0 +1,271 @@
+package com.elyeproj.blurimage.bluralgo
+
+import android.graphics.Bitmap
+import java.util.*
+
+class BlurStack : BlurEngine {
+
+    override fun blur(image: Bitmap, radius: Int): Bitmap {
+        val w = image.width
+        val h = image.height
+        val currentPixels = IntArray(w * h)
+        val newPixels = IntArray(w * h)
+        image.getPixels(currentPixels, 0, w, 0, 0, w, h)
+        blurProcess(w, h, currentPixels, newPixels, radius)
+        return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
+    }
+
+    override fun getType() = "Stack Blur"
+
+    fun blurProcess(
+        w: Int,
+        h: Int,
+        currentPixels: IntArray,
+        newPixels: IntArray,
+        radius: Int
+    ) {
+        val firstPassPixel = IntArray(w * h)
+        val denominator = radius * (radius + 2) + 1
+
+        for (row in 0 until h) {
+
+            val rQueueOut = LinkedList<Int>()
+            val gQueueOut = LinkedList<Int>()
+            val bQueueOut = LinkedList<Int>()
+
+            val rQueueIn = LinkedList<Int>()
+            val gQueueIn = LinkedList<Int>()
+            val bQueueIn = LinkedList<Int>()
+
+            var rSumOut = 0
+            var rSumIn = 0
+            var rSum = 0
+
+            var gSumOut = 0
+            var gSumIn = 0
+            var gSum = 0
+
+            var bSumOut = 0
+            var bSumIn = 0
+            var bSum = 0
+
+            val startIndex = row * w
+            val originalPixel = currentPixels[startIndex]
+            val rOrig = originalPixel ushr 16 and 0xFF
+            val gOrig = originalPixel ushr 8 and 0xFF
+            val bOrig = originalPixel and 0xFF
+
+            repeat(radius + 1) {
+                rQueueOut.add(rOrig)
+                gQueueOut.add(gOrig)
+                bQueueOut.add(bOrig)
+
+                rSumOut += rOrig
+                gSumOut += gOrig
+                bSumOut += bOrig
+
+                rSum += (it + 1) * rOrig
+                gSum += (it + 1) * gOrig
+                bSum += (it + 1) * bOrig
+            }
+
+            for (col in 1..radius) {
+                // In the event of width is smaller than radius
+                val nextPixelIndex = startIndex + if (col > w - 1) w - 1 else col
+                val nextPixel = currentPixels[nextPixelIndex]
+                val rNext = nextPixel ushr 16 and 0xFF
+                val gNext = nextPixel ushr 8 and 0xFF
+                val bNext = nextPixel and 0xFF
+
+                rQueueIn.add(rNext)
+                gQueueIn.add(gNext)
+                bQueueIn.add(bNext)
+
+                rSumIn += rNext
+                gSumIn += gNext
+                bSumIn += bNext
+
+                val multiplier = (radius + 1 - col)
+                rSum += multiplier * rNext
+                gSum += multiplier * gNext
+                bSum += multiplier * bNext
+            }
+
+            for (col in 0 until w) {
+                val newPixelIndex = row * w + col
+                firstPassPixel[newPixelIndex] =
+                    (currentPixels[newPixelIndex] and -0x1000000) /* which is 0xff000000 to get the original alpha */ or
+                            (((rSum / denominator) and 0xff shl 16)) or
+                            (((gSum / denominator) and 0xff shl 8)) or
+                            (((bSum / denominator) and 0xff))
+
+                rSum -= rSumOut
+                gSum -= gSumOut
+                bSum -= bSumOut
+
+                val nextPixelIndex =
+                    if (col + 1 + radius > w - 1)
+                        (row + 1) * w - 1
+                    else row * w + col + radius + 1
+
+                val nextPixel = currentPixels[nextPixelIndex]
+                val rNext = nextPixel ushr 16 and 0xFF
+                val gNext = nextPixel ushr 8 and 0xFF
+                val bNext = nextPixel and 0xFF
+
+                rQueueIn.add(rNext)
+                gQueueIn.add(gNext)
+                bQueueIn.add(bNext)
+
+                rSumIn += rNext
+                gSumIn += gNext
+                bSumIn += bNext
+
+                rSum += rSumIn
+                gSum += gSumIn
+                bSum += bSumIn
+
+                rSumOut -= rQueueOut.remove()
+                gSumOut -= gQueueOut.remove()
+                bSumOut -= bQueueOut.remove()
+
+                val rTransfer = rQueueIn.remove()
+                val gTransfer = gQueueIn.remove()
+                val bTransfer = bQueueIn.remove()
+
+                rSumIn -= rTransfer
+                gSumIn -= gTransfer
+                bSumIn -= bTransfer
+
+                rQueueOut.add(rTransfer)
+                gQueueOut.add(gTransfer)
+                bQueueOut.add(bTransfer)
+
+                rSumOut += rTransfer
+                gSumOut += gTransfer
+                bSumOut += bTransfer
+            }
+        }
+
+        for (col in 0 until w) {
+            val rQueueOut = LinkedList<Int>()
+            val gQueueOut = LinkedList<Int>()
+            val bQueueOut = LinkedList<Int>()
+
+            val rQueueIn = LinkedList<Int>()
+            val gQueueIn = LinkedList<Int>()
+            val bQueueIn = LinkedList<Int>()
+
+            var rSumOut = 0
+            var rSumIn = 0
+            var rSum = 0
+
+            var gSumOut = 0
+            var gSumIn = 0
+            var gSum = 0
+
+            var bSumOut = 0
+            var bSumIn = 0
+            var bSum = 0
+
+            val originalPixel = firstPassPixel[col]
+            val rOrig = originalPixel ushr 16 and 0xFF
+            val gOrig = originalPixel ushr 8 and 0xFF
+            val bOrig = originalPixel and 0xFF
+
+            repeat(radius + 1) {
+                rQueueOut.add(rOrig)
+                gQueueOut.add(gOrig)
+                bQueueOut.add(bOrig)
+
+                rSumOut += rOrig
+                gSumOut += gOrig
+                bSumOut += bOrig
+
+                rSum += (it + 1) * rOrig
+                gSum += (it + 1) * gOrig
+                bSum += (it + 1) * bOrig
+            }
+
+            for (row in 1..radius) {
+                // In the event of width is smaller than radius
+                val nextPixelIndex = col + if (row > h - 1) (h - 1) * w else row * w
+                val nextPixel = firstPassPixel[nextPixelIndex]
+                val rNext = nextPixel ushr 16 and 0xFF
+                val gNext = nextPixel ushr 8 and 0xFF
+                val bNext = nextPixel and 0xFF
+
+                rQueueIn.add(rNext)
+                gQueueIn.add(gNext)
+                bQueueIn.add(bNext)
+
+                rSumIn += rNext
+                gSumIn += gNext
+                bSumIn += bNext
+
+                val multiplier = (radius + 1 - row)
+                rSum += multiplier * rNext
+                gSum += multiplier * gNext
+                bSum += multiplier * bNext
+            }
+
+            for (row in 0 until h) {
+                val newPixelIndex = row * w + col
+                newPixels[newPixelIndex] =
+                    (firstPassPixel[newPixelIndex] and -0x1000000) /* which is 0xff000000 to get the original alpha */ or
+                            ((rSum / denominator) and 0xff shl 16) or
+                            ((gSum / denominator) and 0xff shl 8) or
+                            ((bSum / denominator) and 0xff)
+
+                rSum -= rSumOut
+                gSum -= gSumOut
+                bSum -= bSumOut
+
+                val nextPixelIndex =
+                    if (row + 1 + radius > h - 1)
+                        ((row + 1) * w) + col
+                    else (row + radius + 1) * w + col
+
+                if (nextPixelIndex >= w * h) break
+
+                val nextPixel = firstPassPixel[nextPixelIndex]
+                val rNext = nextPixel ushr 16 and 0xFF
+                val gNext = nextPixel ushr 8 and 0xFF
+                val bNext = nextPixel and 0xFF
+
+                rQueueIn.add(rNext)
+                gQueueIn.add(gNext)
+                bQueueIn.add(bNext)
+
+                rSumIn += rNext
+                gSumIn += gNext
+                bSumIn += bNext
+
+                rSum += rSumIn
+                gSum += gSumIn
+                bSum += bSumIn
+
+                rSumOut -= rQueueOut.remove()
+                gSumOut -= gQueueOut.remove()
+                bSumOut -= bQueueOut.remove()
+
+                val rTransfer = rQueueIn.remove()
+                val gTransfer = gQueueIn.remove()
+                val bTransfer = bQueueIn.remove()
+
+                rSumIn -= rTransfer
+                gSumIn -= gTransfer
+                bSumIn -= bTransfer
+
+                rQueueOut.add(rTransfer)
+                gQueueOut.add(gTransfer)
+                bQueueOut.add(bTransfer)
+
+                rSumOut += rTransfer
+                gSumOut += gTransfer
+                bSumOut += bTransfer
+            }
+        }
+    }
+}
+

@@ -5,10 +5,7 @@ import android.os.Bundle
 import android.widget.RadioButton
 import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
-import com.elyeproj.blurimage.bluralgo.BlurBasic
-import com.elyeproj.blurimage.bluralgo.BlurBox
-import com.elyeproj.blurimage.bluralgo.BlurEngine
-import com.elyeproj.blurimage.bluralgo.JavaBlurProcess
+import com.elyeproj.blurimage.bluralgo.*
 import kotlinx.android.synthetic.main.activity_blur_image_basic.*
 import kotlin.system.measureTimeMillis
 
@@ -27,6 +24,7 @@ class BlurImageBasicActivity : AppCompatActivity() {
             when (findViewById<RadioButton>(checkedId).id) {
                 R.id.radio_blur_basic -> blurEngine = BlurBasic()
                 R.id.radio_blur_box -> blurEngine = BlurBox()
+                R.id.radio_blur_stack -> blurEngine = BlurStack()
                 R.id.radio_blur_optimized_stack -> blurEngine = JavaBlurProcess()
             }
         }
