@@ -1,7 +1,7 @@
 package com.elyeproj.blurimage
 
-import com.elyeproj.blurimage.bluralgo.BlurBasic
 import com.elyeproj.blurimage.bluralgo.BlurBox
+import com.elyeproj.blurimage.bluralgo.BlurBoxOptimized
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -14,8 +14,8 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun box_and_basic_match() {
-        val blurBox = BlurBox()
-        val blurBasic = BlurBasic()
+        val blurBox = BlurBoxOptimized()
+        val blurBasic = BlurBox()
 
         val width = 5
         val height = 4

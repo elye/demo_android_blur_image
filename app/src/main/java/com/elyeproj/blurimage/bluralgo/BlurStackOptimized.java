@@ -36,7 +36,7 @@ import java.util.concurrent.Executors;
  * @copyright: Enrique López Mañas
  * @license: Apache License 2.0
  */
-public class JavaBlurProcess implements BlurEngine {
+public class BlurStackOptimized implements BlurEngine {
 	static final int EXECUTOR_THREADS = Runtime.getRuntime().availableProcessors();
 	static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(EXECUTOR_THREADS);
 

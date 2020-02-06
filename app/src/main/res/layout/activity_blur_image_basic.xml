@@ -17,12 +17,12 @@
             android:id="@+id/radio_blur_basic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Basic"/>
+            android:text="Box"/>
         <RadioButton
             android:id="@+id/radio_blur_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Box"/>
+            android:text="Optimized Box"/>
         <RadioButton
             android:id="@+id/radio_blur_stack"
             android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:max="20" />
+        android:max="100" />
 
     <ImageView
         android:id="@+id/img_view"

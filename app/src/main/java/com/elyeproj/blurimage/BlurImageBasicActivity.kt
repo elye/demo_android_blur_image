@@ -12,7 +12,7 @@ import kotlin.system.measureTimeMillis
 
 class BlurImageBasicActivity : AppCompatActivity() {
 
-    private var blurEngine: BlurEngine = BlurBasic()
+    private var blurEngine: BlurEngine = BlurBox()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,10 +22,11 @@ class BlurImageBasicActivity : AppCompatActivity() {
 
         blur_method.setOnCheckedChangeListener { _, checkedId ->
             when (findViewById<RadioButton>(checkedId).id) {
-                R.id.radio_blur_basic -> blurEngine = BlurBasic()
-                R.id.radio_blur_box -> blurEngine = BlurBox()
+                R.id.radio_blur_basic -> blurEngine = BlurBox()
+                R.id.radio_blur_box -> blurEngine = BlurBoxOptimized()
                 R.id.radio_blur_stack -> blurEngine = BlurStack()
-                R.id.radio_blur_optimized_stack -> blurEngine = JavaBlurProcess()
+                R.id.radio_blur_optimized_stack -> blurEngine =
+                    BlurStackOptimized()
             }
         }
 
