@@ -10,9 +10,7 @@ class BlurBasic: BlurEngine {
         val currentPixels = IntArray(w * h)
         val newPixels = IntArray(w * h)
         image.getPixels(currentPixels, 0, w, 0, 0, w, h)
-
         blurProcess(w, h, currentPixels, newPixels, radius)
-
         return Bitmap.createBitmap(newPixels, w, h, Bitmap.Config.ARGB_8888)
     }
 

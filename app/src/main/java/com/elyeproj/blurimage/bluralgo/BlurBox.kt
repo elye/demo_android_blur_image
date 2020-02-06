@@ -1,7 +1,6 @@
 package com.elyeproj.blurimage.bluralgo
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import java.util.*
 
 class BlurBox: BlurEngine {
@@ -74,7 +73,6 @@ class BlurBox: BlurEngine {
                             ((gSum / denominator) and 0xff shl 8) or
                             ((bSum / denominator) and 0xff)
 
-
                 rSum -= rQueue.remove()
                 gSum -= gQueue.remove()
                 bSum -= bQueue.remove()
@@ -83,8 +81,6 @@ class BlurBox: BlurEngine {
                     if (col + 1 + radius > w - 1)
                         (row + 1) * w - 1
                     else row * w + col + radius + 1
-
-                if (nextPixelIndex >= w * h) break
 
                 val nextPixel = currentPixels[nextPixelIndex]
                 val rNext = nextPixel ushr 16 and 0xFF
@@ -152,7 +148,7 @@ class BlurBox: BlurEngine {
 
                 val nextPixelIndex =
                     if (row + 1 + radius > h - 1)
-                        ((row + radius) * w) + col
+                        ((row + 1) * w) + col
                     else (row + radius + 1) * w + col
 
                 if (nextPixelIndex >= w * h) break
